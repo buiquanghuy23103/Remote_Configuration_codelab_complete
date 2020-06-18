@@ -46,10 +46,14 @@ class MainActivity : AppCompatActivity() {
 
         remoteConfig.fetch(cacheExpirationInSeconds)
                 .addOnSuccessListener {
-                    it?.let { configValues ->  applyRemoteConfig(configValues) }
+                    it?.let { configValues ->
+                        remoteConfig.apply(configValues)
+                        applyRemoteConfig(configValues)
+                    }
                 }
                 .addOnFailureListener {
                     Log.w(TAG, "Error fetching config: ", it)
+                    textView.text = "No message from remote config server"
                 }
     }
 
