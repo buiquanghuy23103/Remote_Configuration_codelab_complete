@@ -3,6 +3,9 @@ package com.huy.remoteconfigtest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import com.huawei.agconnect.remoteconfig.AGConnectConfig
@@ -23,6 +26,22 @@ class MainActivity : AppCompatActivity() {
 
         initRemoteConfig()
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.refresh_config -> {
+                fetchConfig()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun initRemoteConfig() {
