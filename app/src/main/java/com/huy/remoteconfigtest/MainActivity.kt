@@ -3,13 +3,15 @@ package com.huy.remoteconfigtest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.huawei.agconnect.remoteconfig.AGConnectConfig
 import com.huawei.agconnect.remoteconfig.ConfigValues
 import kotlinx.android.synthetic.main.activity_main.*
 
-private const val REMOTE_PARAMETER_KEY = "remote_parameter_key"
+private const val ANIMATION_URL_KEY = "animation_url_key"
 
-private const val TAG = "MainActivity"
+private const val ERROR_ANIMATION_JSON = "error.json"
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,16 +23,13 @@ class MainActivity : AppCompatActivity() {
 
         initRemoteConfig()
 
-        refreshConfig.setOnClickListener {
-            fetchConfig()
-        }
     }
 
     private fun initRemoteConfig() {
         remoteConfig = AGConnectConfig.getInstance()
 
         val defaultConfigMap = HashMap<String, Any>()
-        defaultConfigMap[REMOTE_PARAMETER_KEY] = "Hello world!"
+        defaultConfigMap[ANIMATION_URL_KEY] = ERROR_ANIMATION_JSON
 
         remoteConfig.applyDefault(defaultConfigMap)
 
@@ -48,19 +47,33 @@ class MainActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     it?.let { configValues ->
                         remoteConfig.apply(configValues)
-                        applyRemoteConfig(configValues)
+                        applyAnimationFromRemoteConfig(configValues)
                     }
                 }
                 .addOnFailureListener {
-                    Log.w(TAG, "Error fetching config: ", it)
-                    textView.text = "No message from remote config server"
+                    showErrorLog("Error fetching remote parameter: ${it.localizedMessage}")
                 }
     }
 
-    private fun applyRemoteConfig(configValues: ConfigValues) {
-        val value = configValues.getValueAsString(REMOTE_PARAMETER_KEY)
-        textView.text = value
+    private fun applyAnimationFromRemoteConfig(configValues: ConfigValues) {
+        val animationUrl = configValues.getValueAsString(ANIMATION_URL_KEY)
+        if (!animationUrl.isNullOrEmpty()) {
+            hideErrorView()
+            animation_view.setAnimationFromUrl(animationUrl)
+        } else {
+            showErrorLog("animationUrl is empty")
+        }
     }
 
+    private fun showErrorLog(errorMessage: String) {
+        animation_view.visibility = View.GONE
+        error_view.visibility = View.VISIBLE
+        error_message.text = errorMessage
+    }
+
+    private fun hideErrorView() {
+        animation_view.visibility = View.VISIBLE
+        error_view.visibility = View.GONE
+    }
 
 }
