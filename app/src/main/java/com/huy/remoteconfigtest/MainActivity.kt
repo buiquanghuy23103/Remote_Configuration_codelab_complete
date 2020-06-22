@@ -1,13 +1,11 @@
 package com.huy.remoteconfigtest
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.huawei.agconnect.remoteconfig.AGConnectConfig
 import com.huawei.agconnect.remoteconfig.ConfigValues
 import kotlinx.android.synthetic.main.activity_main.*
